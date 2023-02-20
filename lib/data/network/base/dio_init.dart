@@ -16,9 +16,15 @@ abstract class DioModule {
       requestBody: false,
     ));
     dio.interceptors.add(QueuedInterceptorsWrapper(
-      onRequest: (options, handler) => handler.next(options
-        ..headers[HttpHeaders.authorizationHeader] =
-            'Bearer ${AppConfigs.gitToken}'),
+      onRequest: (options, handler) {
+        if (AppConfigs.gitToken.trim().isNotEmpty) {
+          handler.next(options
+            ..headers[HttpHeaders.authorizationHeader] =
+                'Bearer ${AppConfigs.gitToken}');
+        } else {
+          handler.next(options);
+        }
+      },
     ));
     return dio;
   }
